@@ -12,6 +12,7 @@ function Calendar() {
       end: "",
       color: "",
       textColor: "",
+      category: "",
     },
   ]);
   const [title, setTitle] = useState("");
@@ -19,23 +20,31 @@ function Calendar() {
   const [end, setEnd] = useState("");
   const [color, setColor] = useState("");
   const [textColor, setTextColor] = useState("");
+  const [category, setCategory] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const closeRef = useRef(null);
   const modalRef = useRef(null);
 
   function handleAddEvents() {
-    const newEvent = { title, start, end, color, textColor };
+    const newEvent = { title, start, end, color, textColor, category };
     setEvents([...events, newEvent]);
     setTitle("");
     setStart("");
     setEnd("");
     setColor("");
     setTextColor("");
+    setCategory("");
   }
 
   function handleDateClick() {
     setIsModalOpen(true);
+  }
+
+  function handEventClick(eventInfo) {
+    alert(
+      `Schedule: \n${eventInfo.event.title}\n\nCategory: \n${eventInfo.event.extendedProps.category}\n\nSchedule start time: \n${eventInfo.event.start}\n\nSchedule end time: \n${eventInfo.event.end}`
+    );
   }
 
   return (
@@ -51,6 +60,7 @@ function Calendar() {
         events={events}
         eventColor={color}
         eventTextColor={textColor}
+        eventClick={handEventClick}
         eventContent={(eventInfo) => (
           <div
             style={{
@@ -62,19 +72,20 @@ function Calendar() {
               fontSize: "0.1rem",
             }}
           >
-            {eventInfo.event.title}
+            {eventInfo.event.extendedProps.category}-{eventInfo.event.title}
           </div>
         )}
       />
 
+      {/* Schedule Modal Window */}
       <div className="buttons">
         {isModalOpen && (
           <div id="modal" ref={modalRef}>
             <div className="page">
-              <div className="name">일정을 추가 해주세요</div>
+              <div className="name">Please add a schedule.</div>
 
               <div className="form_control">
-                <label className="name">배경색</label>
+                <label className="name">Background color</label>
                 <input
                   type="color"
                   value={color}
@@ -83,7 +94,7 @@ function Calendar() {
                 />
                 <br />
 
-                <label className="name">글자색</label>
+                <label className="name">Color</label>
                 <input
                   type="color"
                   value={textColor}
@@ -93,31 +104,43 @@ function Calendar() {
                 <br />
               </div>
 
-              <label className="name">일정 작성</label>
+              <label className="name">add a schedule</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="작성 해주세요"
+                placeholder="Please add a schedule."
                 className="todos"
               />
               <br />
 
-              <label className="name">일정 시작</label>
+              <label className="name">add a category</label>
               <input
-                type="date"
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Please add a category."
+                className="todos"
+              />
+              <br />
+
+              <label className="name">Schedule start</label>
+              <input
+                type="datetime-local"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
                 className="todos"
+                placeholder="YYYY-MM-DD hh:mm"
               />
               <br />
 
-              <label className="name">일정 종료</label>
+              <label className="name">Schedule end</label>
               <input
-                type="date"
+                type="datetime-local"
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
                 className="todos"
+                placeholder="YYYY-MM-DD hh:mm"
               />
               <br />
 
@@ -128,10 +151,10 @@ function Calendar() {
                     setIsModalOpen(false);
                   }}
                 >
-                  추가
+                  To add
                 </button>
                 <button ref={closeRef} onClick={() => setIsModalOpen(false)}>
-                  닫기
+                  Cancel
                 </button>
               </div>
             </div>
